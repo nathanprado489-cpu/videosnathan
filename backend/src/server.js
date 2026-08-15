@@ -16,11 +16,11 @@ const uploadDir = path.resolve(process.env.UPLOAD_DIR || './uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 const upload = multer({ dest: uploadDir, limits: { fileSize: 5 * 1024 * 1024 * 1024 } });
 
-app.use(cors({ origin: process.env.FRONTEND_URL?.split(',') || true, credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true, credentials: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use('/media', express.static(uploadDir));
 
-const auth = async (req, res, next) => {
+const auth = (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) return res.status(401).json({ error: 'Autenticação necessária' });
@@ -29,15 +29,16 @@ const auth = async (req, res, next) => {
   } catch { res.status(401).json({ error: 'Token inválido' }); }
 };
 
+const publicVideo = v => ({ ...v, videoUrl:`/media/${v.storageKey}`, thumbnailUrl:v.thumbnailKey ? `/media/${v.thumbnailKey}` : null });
+
 app.get('/api/health', (_, res) => res.json({ ok: true, service: 'VideoSnathan API' }));
 
 app.post('/api/auth/register', async (req, res) => {
   const parsed = z.object({ email:z.string().email(), password:z.string().min(8), name:z.string().min(2).max(80) }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error:'Dados inválidos' });
-  const { email, password, name } = parsed.data;
   try {
-    const passwordHash = await bcrypt.hash(password, 12);
-    const user = await prisma.user.create({ data:{ email, passwordHash, name } });
+    const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+    const user = await prisma.user.create({ data:{ email:parsed.data.email, passwordHash, name:parsed.data.name } });
     const token = jwt.sign({ id:user.id, email:user.email }, process.env.JWT_SECRET, { expiresIn:'7d' });
     res.status(201).json({ token, user:{ id:user.id, email:user.email, name:user.name } });
   } catch { res.status(409).json({ error:'E-mail já cadastrado' }); }
@@ -55,22 +56,22 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/videos', async (req, res) => {
   const q = String(req.query.q || '').trim();
   const videos = await prisma.video.findMany({ where:{ status:'ready', visibility:'public', ...(q ? { OR:[{title:{contains:q,mode:'insensitive'}},{description:{contains:q,mode:'insensitive'}}]} : {}) }, include:{ author:{ select:{id:true,name:true,avatarUrl:true} } }, orderBy:{ createdAt:'desc' }, take:50 });
-  res.json(videos);
+  res.json(videos.map(publicVideo));
 });
 
 app.get('/api/videos/:id', async (req,res) => {
   const video = await prisma.video.findUnique({ where:{id:req.params.id}, include:{author:{select:{id:true,name:true,avatarUrl:true}},comments:{include:{user:{select:{id:true,name:true,avatarUrl:true}}},orderBy:{createdAt:'desc'}}} });
   if (!video) return res.status(404).json({error:'Vídeo não encontrado'});
   await prisma.video.update({ where:{id:video.id}, data:{views:{increment:1}} });
-  res.json(video);
+  res.json(publicVideo(video));
 });
 
 app.post('/api/videos', auth, upload.single('video'), async (req,res) => {
   if (!req.file) return res.status(400).json({error:'Arquivo de vídeo obrigatório'});
   const parsed = z.object({title:z.string().min(1).max(120),description:z.string().max(5000).optional(),visibility:z.enum(['public','private','unlisted']).default('public')}).safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({error:'Título ou dados inválidos'});
-  const video = await prisma.video.create({ data:{ ...parsed.data, description:parsed.data.description || '', storageKey:req.file.filename, authorId:req.user.id } });
-  res.status(201).json(video);
+  if (!parsed.success) { fs.rmSync(req.file.path,{force:true}); return res.status(400).json({error:'Título ou dados inválidos'}); }
+  const video = await prisma.video.create({ data:{ ...parsed.data, description:parsed.data.description || '', storageKey:req.file.filename, status:'ready', authorId:req.user.id } });
+  res.status(201).json(publicVideo(video));
 });
 
 app.post('/api/videos/:id/comments', auth, async (req,res) => {
