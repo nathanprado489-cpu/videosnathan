@@ -2,61 +2,117 @@ generator client { provider = "prisma-client-js" }
 datasource db { provider = "postgresql" url = env("DATABASE_URL") }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  name         String
-  avatarUrl    String?
-  createdAt    DateTime @default(now())
-  videos       Video[]
-  comments     Comment[]
-  subscriptions Subscription[] @relation("subscriber")
-  subscribers Subscription[] @relation("creator")
-  likes        Like[]
+ id String @id @default(cuid())
+ email String @unique
+ passwordHash String
+ name String
+ avatarUrl String?
+ channelDescription String @default("")
+ createdAt DateTime @default(now())
+ videos Video[]
+ comments Comment[]
+ subscriptions Subscription[] @relation("subscriber")
+ subscribers Subscription[] @relation("creator")
+ likes Like[]
+ playlists Playlist[]
+ notifications Notification[]
+ liveStreams LiveStream[]
+ earnings Earning[]
 }
-
 model Video {
-  id          String   @id @default(cuid())
-  title       String
-  description String   @default("")
-  status      String   @default("processing")
-  visibility  String   @default("public")
-  storageKey  String
-  thumbnailKey String?
-  duration    Int      @default(0)
-  views       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  authorId    String
-  author      User     @relation(fields:[authorId], references:[id], onDelete:Cascade)
-  comments    Comment[]
-  likes       Like[]
+ id String @id @default(cuid())
+ title String
+ description String @default("")
+ status String @default("processing")
+ visibility String @default("public")
+ storageKey String
+ playbackKey String?
+ thumbnailKey String?
+ duration Int @default(0)
+ views Int @default(0)
+ likesCount Int @default(0)
+ commentsCount Int @default(0)
+ isShort Boolean @default(false)
+ category String @default("Tudo")
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ authorId String
+ author User @relation(fields:[authorId], references:[id], onDelete:Cascade)
+ comments Comment[]
+ likes Like[]
+ playlistItems PlaylistItem[]
 }
-
 model Comment {
-  id        String   @id @default(cuid())
-  body      String
-  createdAt DateTime @default(now())
-  userId    String
-  videoId   String
-  user      User     @relation(fields:[userId], references:[id], onDelete:Cascade)
-  video     Video    @relation(fields:[videoId], references:[id], onDelete:Cascade)
+ id String @id @default(cuid())
+ body String
+ createdAt DateTime @default(now())
+ userId String
+ videoId String
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
 }
-
 model Like {
-  id String @id @default(cuid())
-  userId String
-  videoId String
-  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
-  video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
-  @@unique([userId, videoId])
+ id String @id @default(cuid())
+ userId String
+ videoId String
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
+ @@unique([userId, videoId])
 }
-
 model Subscription {
-  id String @id @default(cuid())
-  subscriberId String
-  creatorId String
-  subscriber User @relation("subscriber", fields:[subscriberId], references:[id], onDelete:Cascade)
-  creator User @relation("creator", fields:[creatorId], references:[id], onDelete:Cascade)
-  @@unique([subscriberId, creatorId])
+ id String @id @default(cuid())
+ subscriberId String
+ creatorId String
+ createdAt DateTime @default(now())
+ subscriber User @relation("subscriber", fields:[subscriberId], references:[id], onDelete:Cascade)
+ creator User @relation("creator", fields:[creatorId], references:[id], onDelete:Cascade)
+ @@unique([subscriberId, creatorId])
+}
+model Playlist {
+ id String @id @default(cuid())
+ name String
+ description String @default("")
+ userId String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ items PlaylistItem[]
+}
+model PlaylistItem {
+ id String @id @default(cuid())
+ playlistId String
+ videoId String
+ position Int @default(0)
+ playlist Playlist @relation(fields:[playlistId], references:[id], onDelete:Cascade)
+ video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
+ @@unique([playlistId, videoId])
+}
+model Notification {
+ id String @id @default(cuid())
+ type String
+ message String
+ read Boolean @default(false)
+ userId String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+model LiveStream {
+ id String @id @default(cuid())
+ title String
+ streamKey String @unique
+ status String @default("created")
+ playbackUrl String?
+ startedAt DateTime?
+ endedAt DateTime?
+ viewerCount Int @default(0)
+ userId String
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+model Earning {
+ id String @id @default(cuid())
+ amount Int
+ source String
+ videoId String?
+ userId String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
 }
