@@ -8,6 +8,7 @@ model User {
  name String
  avatarUrl String?
  channelDescription String @default("")
+ role String @default("user")
  createdAt DateTime @default(now())
  videos Video[]
  comments Comment[]
@@ -18,6 +19,8 @@ model User {
  notifications Notification[]
  liveStreams LiveStream[]
  earnings Earning[]
+ reports Report[]
+ copyrightClaims CopyrightClaim[]
 }
 model Video {
  id String @id @default(cuid())
@@ -41,6 +44,8 @@ model Video {
  comments Comment[]
  likes Like[]
  playlistItems PlaylistItem[]
+ reports Report[]
+ copyrightClaims CopyrightClaim[]
 }
 model Comment {
  id String @id @default(cuid())
@@ -115,4 +120,27 @@ model Earning {
  userId String
  createdAt DateTime @default(now())
  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+model Report {
+ id String @id @default(cuid())
+ reason String
+ details String @default("")
+ status String @default("open")
+ userId String
+ videoId String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
+}
+model CopyrightClaim {
+ id String @id @default(cuid())
+ claimantEmail String
+ claimantName String
+ reason String
+ status String @default("pending")
+ userId String
+ videoId String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
 }
