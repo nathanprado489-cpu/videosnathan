@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VideoSnathan — plataforma de vídeos.">
+  <title>VideoSnathan</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+    <a class="brand" href="#">▶ <span>VideoSnathan</span></a>
+    <form class="search" id="searchForm">
+      <input id="searchInput" type="search" placeholder="Pesquisar" autocomplete="off">
+      <button aria-label="Pesquisar">⌕</button>
+    </form>
+    <div class="actions"><button class="icon-btn" title="Criar">＋</button><button class="icon-btn" title="Notificações">🔔</button><button class="avatar">N</button></div>
+  </header>
+  <aside id="sidebar" class="sidebar">
+    <a href="#">⌂ Início</a><a href="#">🔥 Em alta</a><a href="#">▣ Inscrições</a><hr>
+    <a href="#">◷ Histórico</a><a href="#">♡ Playlists</a><a href="#">▶ Seus vídeos</a><hr>
+    <a href="#">⚙ Configurações</a><a href="#">🚩 Denúncias</a>
+  </aside>
+  <main class="main">
+    <nav class="chips" id="chips"><button class="active">Tudo</button><button>Futebol</button><button>Jogos</button><button>Música</button><button>Tecnologia</button><button>Notícias</button><button>Ao vivo</button></nav>
+    <section class="hero"><div><span class="eyebrow">NOVA PLATAFORMA</span><h1>Assista. Crie. Compartilhe.</h1><p>Uma plataforma de vídeos com canais, comunidades, Shorts, transmissões ao vivo e ferramentas para criadores.</p><button class="primary" id="exploreBtn">Explorar vídeos</button></div><div class="hero-art">▶</div></section>
+    <section><div class="section-title"><h2>Recomendados</h2><button class="text-btn">Ver tudo</button></div><div class="grid" id="videoGrid"></div></section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
