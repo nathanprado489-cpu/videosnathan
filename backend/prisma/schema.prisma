@@ -9,6 +9,7 @@ model User {
  avatarUrl String?
  channelDescription String @default("")
  role String @default("user")
+ stripeAccountId String?
  createdAt DateTime @default(now())
  videos Video[]
  comments Comment[]
@@ -47,100 +48,13 @@ model Video {
  reports Report[]
  copyrightClaims CopyrightClaim[]
 }
-model Comment {
- id String @id @default(cuid())
- body String
- createdAt DateTime @default(now())
- userId String
- videoId String
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
- video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
-}
-model Like {
- id String @id @default(cuid())
- userId String
- videoId String
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
- video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
- @@unique([userId, videoId])
-}
-model Subscription {
- id String @id @default(cuid())
- subscriberId String
- creatorId String
- createdAt DateTime @default(now())
- subscriber User @relation("subscriber", fields:[subscriberId], references:[id], onDelete:Cascade)
- creator User @relation("creator", fields:[creatorId], references:[id], onDelete:Cascade)
- @@unique([subscriberId, creatorId])
-}
-model Playlist {
- id String @id @default(cuid())
- name String
- description String @default("")
- userId String
- createdAt DateTime @default(now())
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
- items PlaylistItem[]
-}
-model PlaylistItem {
- id String @id @default(cuid())
- playlistId String
- videoId String
- position Int @default(0)
- playlist Playlist @relation(fields:[playlistId], references:[id], onDelete:Cascade)
- video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
- @@unique([playlistId, videoId])
-}
-model Notification {
- id String @id @default(cuid())
- type String
- message String
- read Boolean @default(false)
- userId String
- createdAt DateTime @default(now())
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
-}
-model LiveStream {
- id String @id @default(cuid())
- title String
- streamKey String @unique
- status String @default("created")
- playbackUrl String?
- startedAt DateTime?
- endedAt DateTime?
- viewerCount Int @default(0)
- userId String
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
-}
-model Earning {
- id String @id @default(cuid())
- amount Int
- source String
- videoId String?
- userId String
- createdAt DateTime @default(now())
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
-}
-model Report {
- id String @id @default(cuid())
- reason String
- details String @default("")
- status String @default("open")
- userId String
- videoId String
- createdAt DateTime @default(now())
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
- video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
-}
-model CopyrightClaim {
- id String @id @default(cuid())
- claimantEmail String
- claimantName String
- reason String
- status String @default("pending")
- userId String
- videoId String
- createdAt DateTime @default(now())
- user User @relation(fields:[userId], references:[id], onDelete:Cascade)
- video Video @relation(fields:[videoId], references:[id], onDelete:Cascade)
-}
+model Comment { id String @id @default(cuid()); body String; createdAt DateTime @default(now()); userId String; videoId String; user User @relation(fields:[userId], references:[id], onDelete:Cascade); video Video @relation(fields:[videoId], references:[id], onDelete:Cascade) }
+model Like { id String @id @default(cuid()); userId String; videoId String; user User @relation(fields:[userId], references:[id], onDelete:Cascade); video Video @relation(fields:[videoId], references:[id], onDelete:Cascade); @@unique([userId, videoId]) }
+model Subscription { id String @id @default(cuid()); subscriberId String; creatorId String; createdAt DateTime @default(now()); subscriber User @relation("subscriber", fields:[subscriberId], references:[id], onDelete:Cascade); creator User @relation("creator", fields:[creatorId], references:[id], onDelete:Cascade); @@unique([subscriberId, creatorId]) }
+model Playlist { id String @id @default(cuid()); name String; description String; userId String; createdAt DateTime @default(now()); user User @relation(fields:[userId], references:[id], onDelete:Cascade); items PlaylistItem[] }
+model PlaylistItem { id String @id @default(cuid()); playlistId String; videoId String; position Int @default(0); playlist Playlist @relation(fields:[playlistId], references:[id], onDelete:Cascade); video Video @relation(fields:[videoId], references:[id], onDelete:Cascade); @@unique([playlistId, videoId]) }
+model Notification { id String @id @default(cuid()); type String; message String; read Boolean @default(false); userId String; createdAt DateTime @default(now()); user User @relation(fields:[userId], references:[id], onDelete:Cascade) }
+model LiveStream { id String @id @default(cuid()); title String; streamKey String @unique; status String @default("created"); playbackUrl String?; startedAt DateTime?; endedAt DateTime?; viewerCount Int @default(0); userId String; user User @relation(fields:[userId], references:[id], onDelete:Cascade) }
+model Earning { id String @id @default(cuid()); amount Int; source String; videoId String?; userId String; createdAt DateTime @default(now()); user User @relation(fields:[userId], references:[id], onDelete:Cascade) }
+model Report { id String @id @default(cuid()); reason String; details String; status String @default("open"); userId String; videoId String; createdAt DateTime @default(now()); user User @relation(fields:[userId], references:[id], onDelete:Cascade); video Video @relation(fields:[videoId], references:[id], onDelete:Cascade) }
+model CopyrightClaim { id String @id @default(cuid()); claimantEmail String; claimantName String; reason String; status String @default("pending"); userId String; videoId String; createdAt DateTime @default(now()); user User @relation(fields:[userId], references:[id], onDelete:Cascade); video Video @relation(fields:[videoId], references:[id], onDelete:Cascade) }
