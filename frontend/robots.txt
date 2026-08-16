@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nathanprado489-cpu.github.io/videosnathan/sitemap.xml
