@@ -1,0 +1,17 @@
+company_colonial_sugar_company = {
+    icon = "gfx/interface/icons/company_icons/historical_company.dds"
+    building_types = { building_colonial_sugar_mill building_sugar_plantation }
+    prosperity_modifier = { building_sugar_plantation_throughput_add = 0.10 }
+}
+
+company_petroleum_and_energy_brazil = {
+    icon = "gfx/interface/icons/company_icons/historical_company.dds"
+    building_types = { building_oil_rig building_power_plant }
+    prosperity_modifier = { building_oil_rig_throughput_add = 0.10 building_power_plant_throughput_add = 0.10 }
+}
+
+company_digital_brazil = {
+    icon = "gfx/interface/icons/company_icons/company.dds"
+    building_types = { building_digital_services_hub building_electrics_industry }
+    prosperity_modifier = { country_innovation_add = 10 }
+}

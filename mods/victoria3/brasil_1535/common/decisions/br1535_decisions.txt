@@ -1,0 +1,16 @@
+found_united_nations = {
+    picture = "gfx/interface/illustrations/decisions/decision_parliament.dds"
+    desc = found_united_nations_desc
+    selection_tooltip = found_united_nations_tooltip
+    is_shown = { year >= 1945 }
+    possible = {
+        year >= 1945
+        has_technology_researched = br1535_developmental_state
+        is_at_war = no
+    }
+    effect = {
+        add_modifier = { name = br1535_un_founder years = 20 }
+        enact_law = law_united_nations_member
+    }
+    ai_chance = { base = 25 }
+}

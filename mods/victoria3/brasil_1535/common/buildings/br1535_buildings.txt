@@ -1,0 +1,26 @@
+building_colonial_sugar_mill = {
+    building_group = bg_agriculture
+    icon = "gfx/interface/icons/building_icons/sugar_plantation.dds"
+    levels_per_mesh = 5
+    city_type = farm
+    unlock_technologies = { br1535_colonial_sugar_complex }
+    production_method_groups = { pmg_base_building_sugar_plantation }
+}
+
+building_royal_custom_house = {
+    building_group = bg_government
+    icon = "gfx/interface/icons/building_icons/port.dds"
+    levels_per_mesh = 5
+    city_type = city
+    unlock_technologies = { br1535_royal_chartered_ports }
+    production_method_groups = { pmg_base_building_government_administration }
+}
+
+building_digital_services_hub = {
+    building_group = bg_manufacturing
+    icon = "gfx/interface/icons/building_icons/electrics_industries.dds"
+    levels_per_mesh = 5
+    city_type = city
+    unlock_technologies = { br1535_digital_sovereignty }
+    production_method_groups = { pmg_base_building_electrics_industry }
+}

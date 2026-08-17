@@ -1,0 +1,5 @@
+je_br1535_long_centuries = {
+    icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+    complete = { year >= 2025 }
+    on_complete = { add_modifier = { name = br1535_modern_nation years = 10 } }
+}
