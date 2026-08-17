@@ -1,0 +1,3 @@
+lawgroup_global_governance = {
+    law_group_category = human_rights
+}

@@ -1,0 +1,83 @@
+# Prototype technology spine for an extended 1535-2025 campaign.
+# The file intentionally uses standalone keys so balancing can be mapped to the
+# current Victoria 3 technology database without overwriting vanilla entries.
+
+br1535_colonial_sugar_complex = {
+    era = era_1
+    texture = "gfx/interface/icons/technology_icons/production_tech.dds"
+    category = production
+    unlocking_technologies = { }
+    modifier = { building_sugar_plantation_throughput_add = 0.10 }
+}
+
+br1535_atlantic_cartography = {
+    era = era_1
+    texture = "gfx/interface/icons/technology_icons/society_tech.dds"
+    category = society
+    unlocking_technologies = { br1535_colonial_sugar_complex }
+    modifier = { state_infrastructure_mult = 0.05 }
+}
+
+br1535_inland_bandeiras = {
+    era = era_1
+    texture = "gfx/interface/icons/technology_icons/military_tech.dds"
+    category = military
+    unlocking_technologies = { br1535_atlantic_cartography }
+    modifier = { conscript_battalion_cost_mult = -0.05 }
+}
+
+br1535_royal_chartered_ports = {
+    era = era_2
+    texture = "gfx/interface/icons/technology_icons/production_tech.dds"
+    category = production
+    unlocking_technologies = { br1535_atlantic_cartography }
+    modifier = { building_port_throughput_add = 0.15 }
+}
+
+br1535_imperial_bureaucracy = {
+    era = era_2
+    texture = "gfx/interface/icons/technology_icons/society_tech.dds"
+    category = society
+    unlocking_technologies = { br1535_royal_chartered_ports }
+    modifier = { country_bureaucracy_mult = 0.10 }
+}
+
+br1535_coffee_frontier = {
+    era = era_3
+    texture = "gfx/interface/icons/technology_icons/production_tech.dds"
+    category = production
+    unlocking_technologies = { br1535_imperial_bureaucracy }
+    modifier = { building_coffee_plantation_throughput_add = 0.20 }
+}
+
+br1535_abolitionist_press = {
+    era = era_3
+    texture = "gfx/interface/icons/technology_icons/society_tech.dds"
+    category = society
+    unlocking_technologies = { br1535_coffee_frontier }
+    modifier = { country_authority_add = -50 country_legitimacy_base_add = 5 }
+}
+
+br1535_national_industry = {
+    era = era_4
+    texture = "gfx/interface/icons/technology_icons/production_tech.dds"
+    category = production
+    unlocking_technologies = { br1535_abolitionist_press }
+    modifier = { building_tooling_workshops_throughput_add = 0.15 building_steel_mills_throughput_add = 0.10 }
+}
+
+br1535_developmental_state = {
+    era = era_4
+    texture = "gfx/interface/icons/technology_icons/society_tech.dds"
+    category = society
+    unlocking_technologies = { br1535_national_industry }
+    modifier = { country_construction_add = 10 }
+}
+
+br1535_digital_sovereignty = {
+    era = era_5
+    texture = "gfx/interface/icons/technology_icons/society_tech.dds"
+    category = society
+    unlocking_technologies = { br1535_developmental_state }
+    modifier = { country_innovation_add = 25 country_bureaucracy_mult = 0.05 }
+}
